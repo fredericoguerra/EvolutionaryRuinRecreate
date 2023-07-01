@@ -37,7 +37,6 @@ void LocalSearch::swap(vector<unsigned int> &solution, double &cost)
             /*d2 = compCost(sol);
             if (d2 != delta && delta < 10000)
                 cout << "swap i j: " << i << " " << j <<" delta: " << delta << " d2: " << d2 << endl;*/
-
             if (delta < menor)
             {
                 menor = delta;
@@ -98,8 +97,10 @@ double LocalSearch::compCostSwap(int i, int j)
     if (i == 0)
     {
         if (j == 1)
-        {
-            newseq = infoseq->concatSequence(infoseq->sequencesMatrix[j][i], infoseq->sequencesMatrix[j + 1][data->n - 1]);
+        {  
+            //cout << infoseq->sequencesMatrix[j][i].firstJob << ">>" << infoseq->sequencesMatrix[j][i].lastJob << endl;
+            //cout << infoseq->sequencesMatrix[j + 1][data->n - 1].firstJob << ">>" << infoseq->sequencesMatrix[j + 1][data->n - 1].lastJob << endl;
+            newseq = infoseq->concatSequence(infoseq->sequencesMatrix[i][j], infoseq->sequencesMatrix[j + 1][data->n - 1]);
         }
         else
         {
@@ -278,49 +279,54 @@ double LocalSearch::compCostBlockInsertion(int l, int i, int j)
 
 void LocalSearch::rvnd(Individual *individual)
 {
-      /*cout << "recebido: " << endl;
-      for(int i = 0; i < individual->chromosome.size(); i++){
-        cout << individual->chromosome[i] << " ";
-    }
-    cout << endl;*/
+      //cout << "recebido: " << endl;*/
+    //cout << endl;
     tempIndiv->copyIndividual(tempIndiv, individual);
     infoseq->setSequencesMatrix(individual->chromosome); // build the subsequence structures to perform local search
-    vector<unsigned int> nLista = {0, 1, 2, 3, 4, 5, 6};
-
+    //vector<unsigned int> nLista = {0, 1, 2, 3, 4, 5, 6};
+    vector<unsigned int> nLista = {0};
+    int swap_c = 0, ib1 = 0, ib2 = 0, ib3 = 0, ib4 = 0, ib5 = 0, ib6 = 0;
     int sel, pos;
 
     while (!nLista.empty())
     { // roda enquanto existirem estruturas de vizinhança na lista
-
+        
         int k = rand() % nLista.size();
-
+    
         switch (nLista[k])
         {
         case 0:
+            swap_c += 1;
             swap(tempIndiv->chromosome, tempIndiv->solutionCost);
             break;
 
         case 1:
+            ib1 += 1;
             l_InsertBlock(1, tempIndiv->chromosome, tempIndiv->solutionCost);
             break;
 
         case 2:
+            ib2 += 1;
             l_InsertBlock(2, tempIndiv->chromosome, tempIndiv->solutionCost);
             break;
 
         case 3:
+            ib3 += 1;
             l_InsertBlock(3, tempIndiv->chromosome, tempIndiv->solutionCost);
             break;
 
         case 4:
+            ib4 += 1;
             l_InsertBlock(4, tempIndiv->chromosome, tempIndiv->solutionCost);
             break;
 
         case 5:
+            ib5 += 1;
             l_InsertBlock(5, tempIndiv->chromosome, tempIndiv->solutionCost);
             break;
 
         case 6:
+            ib6 += 1;
             l_InsertBlock(6, tempIndiv->chromosome, tempIndiv->solutionCost);
             break;
         }

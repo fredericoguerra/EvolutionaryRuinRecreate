@@ -15,7 +15,7 @@ using namespace std;
 
 class Genetic {
     private:
-        int nbIterWithoutImprov; ///< number of iterations without improvement
+        double nbTimeWithoutImprov; ///< number of iterations without improvement
         int nbIter; ///< number of iterations
     
     public:
@@ -26,7 +26,8 @@ class Genetic {
         LocalSearch *localSearch;
 
         void crossoverOX(Individual *parent1, Individual *parent2);
-        void evolve(int maxIterWithoutImprov);
+        void ruinRecreate(Individual *parent1, int ruinRate);
+        void evolve(int maxTimeWithoutImprov, int ruinRate);
         Genetic(Data *data, Population *population);
         ~Genetic();
 };

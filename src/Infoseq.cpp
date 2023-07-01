@@ -5,6 +5,7 @@ Infoseq::Infoseq(Data *data) : data(data)
     //this->data = data;
 
     sequencesMatrix = new infoSequence *[data->n + 1];
+
     for (int i = 0; i <= data->n; ++i)
     {
         sequencesMatrix[i] = new infoSequence[data->n + 1];
@@ -23,7 +24,7 @@ Infoseq::~Infoseq()
 }
 
 infoSequence Infoseq::concatSequence(infoSequence seq1, infoSequence seq2)
-{
+{   
     infoSequence res_seq; // resulting sequence
     double idleTime = 0;
 
@@ -37,7 +38,7 @@ infoSequence Infoseq::concatSequence(infoSequence seq1, infoSequence seq2)
         if(seq1.initialTime + seq1.duration < seq2.initialTime)
             idleTime += seq2.initialTime - (seq1.initialTime + seq1.duration);
     }
-
+    
     res_seq.firstJob = seq1.firstJob;
     res_seq.lastJob = seq2.lastJob;
     res_seq.duration = seq1.duration + seq2.duration;
@@ -50,7 +51,6 @@ infoSequence Infoseq::concatSequence(infoSequence seq1, infoSequence seq2)
 
     return res_seq;
 }
-
 
 double Infoseq::evaluateSolution(infoSequence *seq){
     infoSequence res_seq;
@@ -82,18 +82,19 @@ void Infoseq::setSequencesMatrix(vector<unsigned int> s)
     {
         sequencesMatrix[i][i].firstJob = s[i];
         sequencesMatrix[i][i].lastJob = s[i];
-        sequencesMatrix[i][i].initialTime = data->jobs[s[i] - 1].r_j;
-        sequencesMatrix[i][i].duration = data->jobs[s[i] - 1].p_j;
-        sequencesMatrix[i][i].qsum = data->jobs[s[i] - 1].inv_mod;
+        sequencesMatrix[i][i].initialTime = data->jobs[s[i] - 1].r_j; //r_j = release_date
+        sequencesMatrix[i][i].duration = data->jobs[s[i] - 1].p_j; //p_j = process_time
+        sequencesMatrix[i][i].qsum = data->jobs[s[i] - 1].inv_mod; //inv_mod = inventory_modification
         sequencesMatrix[i][i].qmin = min(0, data->jobs[s[i] - 1].inv_mod);
         sequencesMatrix[i][i].qmax = max(0, data->jobs[s[i] - 1].inv_mod);
         sequencesMatrix[i][i].lmin = -sequencesMatrix[i][i].qmin;
         sequencesMatrix[i][i].lmax = data->maxCapacity - sequencesMatrix[i][i].qmax;
     }
-
+    
     for (int i = 0; i < data->n; i++)
     { // original path
         for (int j = i + 1; j < data->n; j++)
+        //Tempo amortizado - Fazer manual
         {
             sequencesMatrix[i][j] = concatSequence(sequencesMatrix[i][j - 1], sequencesMatrix[j][j]);
         }
@@ -106,4 +107,19 @@ void Infoseq::setSequencesMatrix(vector<unsigned int> s)
             sequencesMatrix[i][j] = concatSequence(sequencesMatrix[i][j + 1], sequencesMatrix[j][j]);
         }
     }
+    /*
+    for(int i = 0; i < data->n-1; i++){
+        for(int j = 0; j < data->n-1; j++){
+            cout << endl << endl;
+            cout << "firstJob: " << sequencesMatrix[i][j].firstJob << endl;
+            cout << "lastJob: " << sequencesMatrix[i][j].lastJob << endl;
+            cout << "initialTime: " << sequencesMatrix[i][j].initialTime << endl;
+            cout << "duration: " << sequencesMatrix[i][j].duration << endl;
+            cout << "qsum: " << sequencesMatrix[i][j].qsum << endl;
+            cout << "qmin: " << sequencesMatrix[i][j].qmin << endl;
+            cout << "qmax: " << sequencesMatrix[i][j].qmax << endl;
+            cout << "lmin: " << sequencesMatrix[i][j].lmin << endl;
+            cout << "lmax: " << sequencesMatrix[i][j].lmax << endl;
+            }
+    }*/
 }

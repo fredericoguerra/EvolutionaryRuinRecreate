@@ -10,6 +10,10 @@ Individual::Individual(Data *data) : data(data)
         chromosome.push_back(i);
         edgesIndividuals.push_back(0);
     }
+    //cout << endl << endl << "Individual initialized: " << endl;
+    //for(int i = 0; i <= data->n-1; i++){
+    //    cout << chromosome[i] << " ";
+    //}
 
     unsigned int jj, temp;
     for (unsigned int i = 0; i <= (unsigned int)chromosome.size() - 1; i++)
@@ -19,6 +23,11 @@ Individual::Individual(Data *data) : data(data)
         chromosome[i] = chromosome[jj];
         chromosome[jj] = temp;
     }
+
+    //cout << endl << "Individual shuffled: " << endl;
+    //for(int i = 0; i <= data->n-1; i++){
+    //    cout << chromosome[i] << " ";
+    //}
 
     solutionCost = calcCost(); // compute cost of individual
 }

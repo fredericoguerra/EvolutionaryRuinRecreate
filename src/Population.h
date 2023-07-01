@@ -46,7 +46,4 @@ class Population {
 
     };
 
-
-
-
 #endif

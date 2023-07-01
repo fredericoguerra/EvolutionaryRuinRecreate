@@ -3,12 +3,17 @@
 
 Population::Population(Data *data) : data(data){
     Individual *randomIndiv;
+    //creates an empty subpopulation
     subPopulation = new SubPopulation();
     subPopulation->numberIndividuals = 0;
 
     trainer = new Individual(data);
+    /*for(int i = 0; i < trainer->chromosome.size(); i++){
+            cout << trainer->chromosome[i] << " ";
+        }
+    cout << trainer->divRank << endl;
+    cout << endl;*/
     localSearch = new LocalSearch(data);
-
     for (unsigned int i = 0; i < data->populationSize; i++) {
         randomIndiv = new Individual(data);
         education(randomIndiv); // busca local na população inicial
@@ -146,14 +151,19 @@ void Population::evalExtFit(SubPopulation *subPop) {
 
     // Compute the biased fitness
     for (int i = 0; i < subPop->numberIndividuals; i++) {
-        subPop->individuals[position[i]]->divRank = (float)i / (float)(subPop->numberIndividuals - 1);
-        subPop->individuals[position[i]]->fitRank = (float)position[i] / (float)(subPop->numberIndividuals - 1);
-        subPop->individuals[position[i]]->fitnessExt = subPop->individuals[position[i]]->fitRank + ((float) 1.0 - (float)data->numberElite / (float)subPop->numberIndividuals) * subPop->individuals[position[i]]->divRank;
+        subPop->individuals[position[i]]->divRank = (float)i / (float)(subPop->numberIndividuals - 1); 
+        subPop->individuals[position[i]]->fitRank = (float)position[i] / (float)(subPop->numberIndividuals - 1); 
+        subPop->individuals[position[i]]->fitnessExt = subPop->individuals[position[i]]->fitRank + (((float) 1.0 - (float)data->numberElite / (float)subPop->numberIndividuals) * subPop->individuals[position[i]]->divRank);
     }
+
+    /*for (int i = 0; i < subPop->numberIndividuals; i++) {
+        cout << endl << "Pos " << i << ":" << endl;
+        for (int j; j<subPop->individuals[position[i]]->chromosome.size(); j++){
+            cout << subPop->individuals[position[i]]->chromosome[j] << ' ';
+        }
+        cout << endl << "divRank: " << subPop->individuals[position[i]]-> divRank << " | fitRank: " << subPop->individuals[position[i]]->fitRank << " | fitnessExt: " << subPop->individuals[position[i]]->fitnessExt << endl;
+    }*/
 }
-
-
-
 
 void Population::updateAge() {
     for (int i = 0; i < subPopulation->numberIndividuals; i++)
@@ -179,13 +189,18 @@ void Population::diversify() {
     }
 }
 
-
 Individual *Population::getIndividualBinT() {
     Individual *individual1;
     Individual *individual2;
     int place1, place2;
 
     // Pick the first individual
+    /*for(int i=0; i<subPopulation->numberIndividuals; i++){
+        cout << endl << "Ind : " << i << endl;
+        for(int j=0; j<subPopulation->individuals[i]->chromosome.size(); j++){
+            cout << " " << subPopulation->individuals[i]->chromosome[j];
+        }
+    }*/
     place1 = rand() % (subPopulation->numberIndividuals);
     individual1 = subPopulation->individuals[place1];
 
@@ -196,12 +211,11 @@ Individual *Population::getIndividualBinT() {
     evalExtFit(subPopulation);
 
     // Keep the best one
-    if (individual1->fitnessExt < individual2->fitnessExt)
+    if (individual1->fitnessExt < individual2->fitnessExt)  
         return individual1;
     else
         return individual2;
 }
-
 
 Individual *Population::getBestIndividual() {
     if (subPopulation->numberIndividuals != 0)
