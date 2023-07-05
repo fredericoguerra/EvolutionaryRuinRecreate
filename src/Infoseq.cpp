@@ -35,13 +35,15 @@ infoSequence Infoseq::concatSequence(infoSequence seq1, infoSequence seq2)
         idleTime = 0;
     else{
         idleTime = 0;
-        if(seq1.initialTime + seq1.duration < seq2.initialTime)
-            idleTime += seq2.initialTime - (seq1.initialTime + seq1.duration);
+        if(seq1.initialTime + seq1.duration < data->jobs[seq2.firstJob-1].r_j)
+            idleTime += data->jobs[seq2.firstJob-1].r_j - (seq1.initialTime + seq1.duration);
+        if(seq1.initialTime + seq1.duration + idleTime + data->mSetupTimes[seq1.lastJob][seq2.firstJob]  < seq2.initialTime)
+            idleTime += seq2.initialTime - (seq1.initialTime + seq1.duration + data->mSetupTimes[seq1.lastJob][seq2.firstJob] + idleTime) + 10000000000;
     }
     
     res_seq.firstJob = seq1.firstJob;
     res_seq.lastJob = seq2.lastJob;
-    res_seq.duration = seq1.duration + seq2.duration;
+    res_seq.duration = seq1.duration + seq2.duration + data->mSetupTimes[seq1.lastJob][seq2.firstJob];
     res_seq.initialTime = seq1.initialTime + idleTime;
     res_seq.qsum = seq1.qsum + seq2.qsum;
     res_seq.qmin = min(seq1.qmin, seq1.qsum + seq2.qmin);
@@ -84,6 +86,7 @@ void Infoseq::setSequencesMatrix(vector<unsigned int> s)
         sequencesMatrix[i][i].lastJob = s[i];
         sequencesMatrix[i][i].initialTime = data->jobs[s[i] - 1].r_j; //r_j = release_date
         sequencesMatrix[i][i].duration = data->jobs[s[i] - 1].p_j; //p_j = process_time
+        //sequencesMatrix[i][i].setupTime = data->jobs[s[i] - 1].s_j; // s_j = setup time
         sequencesMatrix[i][i].qsum = data->jobs[s[i] - 1].inv_mod; //inv_mod = inventory_modification
         sequencesMatrix[i][i].qmin = min(0, data->jobs[s[i] - 1].inv_mod);
         sequencesMatrix[i][i].qmax = max(0, data->jobs[s[i] - 1].inv_mod);

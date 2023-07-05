@@ -10,6 +10,7 @@ struct infoSequence
 {
     double duration = 0;       //minimum duration
     double initialTime = 0;    // earliest time
+    double setupTime =0;       // setup time 
     double qsum = 0;           // sum of modifications
     double qmin = 0;           // minimum modification
     double qmax = 0;           // max modification

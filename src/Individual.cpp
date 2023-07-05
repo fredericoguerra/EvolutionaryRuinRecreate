@@ -47,24 +47,42 @@ void Individual::copyIndividual(Individual *destination, Individual *source)
 
 double Individual::calcCost()
 {
-    double c_time = 0;
+    //double c_time = 0;
+    double c_time = data->mSetupTimes[0][chromosome[0]] + data->jobs[chromosome[0]-1].r_j + data->jobs[chromosome[0]-1].p_j;
     double inventory = data->initialInventory;
     bool penalize = false;
-
-    for (int i = 0; i < data->n; i++)
+    //cout << c_time << endl;
+    for (int i = 0, j = 1; j < data->n; i++, j++)
     {
-        if (c_time >= data->jobs[chromosome[i] - 1].r_j)
-            c_time += data->jobs[chromosome[i] - 1].p_j;
-        else
-            c_time = data->jobs[chromosome[i] - 1].r_j + data->jobs[chromosome[i] - 1].p_j;
+        if (c_time >= data->jobs[chromosome[j] - 1].r_j){
+            c_time += data->jobs[chromosome[j] - 1].p_j + data->mSetupTimes[chromosome[i]][chromosome[j]];
+            }
+        else{
+            c_time += data->jobs[chromosome[j] - 1].r_j + data->jobs[chromosome[j] - 1].p_j + data->mSetupTimes[chromosome[i]][chromosome[j]];
+            }
 
         inventory += data->jobs[chromosome[i] - 1].inv_mod;
         // cout << inventory << " ";
         if (inventory < 0 || inventory > data->maxCapacity)
             penalize = true;
     }
+    
+    
     // cout << endl;
     c_time = (penalize) ? c_time * 10000 : c_time;
+    //cout << c_time;
+    /*if(c_time < 264){
+        
+        for (int i = 0; i < data->n; i++){
+            cout << chromosome[i] << " ";
+            }
+        cout << endl << data->mSetupTimes[0][chromosome[0]] << endl;
+        for (int i = 0, j = 1; j < data->n; i++, j++){
+        cout << "i: " << chromosome[i] << " j: " << chromosome[j] << " Setup: " << data->mSetupTimes[chromosome[i]][chromosome[j]]<<endl;
+        }
+
+        cout << endl << "c_time: " << c_time << endl;
+    }*/
 
     return c_time;
 }

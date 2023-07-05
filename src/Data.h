@@ -13,6 +13,7 @@ struct Job
     unsigned int id_job;
     int r_j; // release date
     int p_j; // processing time
+    int s_j; // setup time
     int inv_mod; // inventory modification
 };
 
@@ -23,6 +24,7 @@ class Data{
         int n; // number of jobs
         int initialInventory, maxCapacity;
         vector<Job> jobs; // vector containing release dates and processing times
+        double** mSetupTimes; // machine setup times before process each job 
 
         //parameters
         unsigned int populationSize;

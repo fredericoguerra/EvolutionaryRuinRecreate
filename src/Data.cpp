@@ -21,6 +21,9 @@ Data::Data(int argc, char** argv)
 
 Data::~Data()
 {
+    for (int i = 0; i <= n; ++i)
+        delete[] mSetupTimes[i];
+    delete[] mSetupTimes;
 }
 
 void Data::read(){
@@ -62,6 +65,17 @@ void Data::read(){
 
 
        }*/
+    }
+    mSetupTimes = new double*[n+1];
+    for ( int i = 0; i <= n; i++){
+        mSetupTimes[i] = new double [n+1];
+    }
+
+    for(int i = 0; i <= n; i++){
+        mSetupTimes[i][0] = 0;
+        for(int j = 1; j <= n; j++){
+            in >> mSetupTimes[i][j];
+        }
     }
 }
 

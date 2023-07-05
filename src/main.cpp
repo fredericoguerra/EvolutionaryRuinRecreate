@@ -52,7 +52,7 @@ int main(int argc, char **argv)
     { // Benchmark mode
         nExecs = 10;
         //ruinRate = stoi(argv[3]);
-        ruinRate = 3;
+        ruinRate = 5;
     }
 
     string instance_name = argv[1];
@@ -94,8 +94,7 @@ int main(int argc, char **argv)
 
     Individual bestIndividual(data);
     Individual bestIndividualOverall(data);
-    bestIndividualOverall.solutionCost = numeric_limits<double>::infinity();
-
+    bestIndividualOverall.solutionCost = numeric_limits<double>::infinity();    
     for (int i = 0; i < nExecs; i++)
     {
 
@@ -105,8 +104,8 @@ int main(int argc, char **argv)
 
         double initialTime = cpuTime();
         //initialize population
+        //cout << "A" << endl;
         population = new Population(data);
-
 
         Genetic solver(data, population);
         //solver.evolve(ilsTime * 1000.0);
@@ -120,9 +119,11 @@ int main(int argc, char **argv)
 
         //cout << runTime << endl;
 
-
+        bestIndividual.solutionCost = bestIndividual.calcCost();
         sumRunTimes += runTime;
         sumCosts += bestIndividual.solutionCost;
+
+        //int cost = bestIndividual.calcCost();
 
         /*for (int i = 0; i < bestIndividualOverall.chromosome.size(); i++)
         {
@@ -140,6 +141,14 @@ int main(int argc, char **argv)
 
         delete population;
     }
+
+    /*for (int i = 0; i < data->n; i++){
+            cout << bestIndividualOverall.chromosome[i] << " ";
+            }
+        cout << endl<< "j: "<< bestIndividualOverall.chromosome[0] << endl << " r_j: " << data->jobs[bestIndividualOverall.chromosome[0] - 1].r_j << " p_j: " << data->jobs[bestIndividualOverall.chromosome[0] - 1].p_j << " Setup: "<< data->mSetupTimes[0][bestIndividualOverall.chromosome[0]] << endl;
+        for (int i = 0, j = 1; j < data->n; i++, j++){
+        cout << "i: " << bestIndividualOverall.chromosome[i] << " j: " << bestIndividualOverall.chromosome[j] << endl <<" r_j: " << data->jobs[bestIndividualOverall.chromosome[j] - 1].r_j << " p_j: " << data->jobs[bestIndividualOverall.chromosome[j] - 1].p_j << " Setup: " << data->mSetupTimes[bestIndividualOverall.chromosome[i]][bestIndividualOverall.chromosome[j]]<<endl;
+        }*/
 
     cout << arg1 << "," << bestIndividualOverall.solutionCost << "," << sumCosts / nExecs << "," << bestTime << "," << sumRunTimes / nExecs << "," << ruinRate << endl;
     cout << "seed: " << bestSeed << endl;
